@@ -14,7 +14,8 @@ Zawiera gotowe panele, komponenty i konfiguracje, które wykorzystuję do person
   Każdy panel jest w pełni samodzielny i gotowy do użycia w Spider Monkey Panel:
 
   - `main_player.js` — minimalistyczny player z animacjami, ratingiem, STOP‑mode i progressem w stylu Spotify  
-  - `file_info_panel.js` — dynamiczny panel informacji o pliku (bitrate, samplerate, ReplayGain, codec itd.)  
+  - `file_info_panel.js` — dynamiczny panel informacji o pliku (bitrate, samplerate, ReplayGain, codec itd.)
+  - `history_panel.js` - historia odtwarzania z auto playlistą
   - inne skrypty, które dodaję jako część mojego workflow
 
 - **Komponenty i dodatki**, których używam na co dzień  
