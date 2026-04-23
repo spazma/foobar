@@ -1,34 +1,54 @@
-# foobar
+# 🎧 foobar — mój backup konfiguracji Foobar2000
 
-Backup oraz zapis mojej konfiguracji i wyglądu dla Foobar2000. Repozytorium zawiera gotowe komponenty i skrypty, które możesz wykorzystać do personalizacji swojego Foobara.
-
-## Co znajdziesz w repozytorium?
-
-- **Moje ustawienia i wygląd** – gotowe konfiguracje, które łatwo zaimportować do Foobar2000.
-- **Komponenty** – własne dodatki/skrypty do paneli, np.:
-  - status_bar.js – własny pasek statusu pokazujący informacje o utworze, bitrate, czasie odtwarzania itp.
-  - details.js – panel z szczegółami utworu (artysta, tytuł, rating, album, play count, ReplayGain itd.)
-
-## Linki do komponentów i inspiracji
-
-- [Foobar2000 oficjalna strona](https://www.foobar2000.org/)
-- [Oficjalne repozytorium komponentów](https://www.foobar2000.org/components)
-- [Github: komponenty do Foobar2000](https://github.com/topics/foobar2000)
-- Przykłady paneli/konfiguracji:  
-  - [foo_jscript_panel](https://github.com/19379/foo_jscript_panel)
-  - [foo_spider_monkey_panel](https://github.com/19379/foo_spider_monkey_panel)
-
-## Jak korzystać?
-
-1. Skopiuj wybrane pliki do swojej konfiguracji Foobar2000.
-2. Zainstaluj potrzebne komponenty (np. JScript Panel, Spider Monkey Panel).
-3. Załaduj własne skrypty (skopiuj konfig ręcznie z plików) (np. `status_bar.js`, `details.js`).
-
-## O mnie
-
-Repozytorium tworzone jako backup oraz zbiór moich ulubionych ustawień dla Foobar2000.  
-Jeśli masz pytania lub propozycje – zapraszam do kontaktu w Issues!
+Repozytorium pełni rolę **backup’u** oraz **zestawu moich własnych skryptów i ustawień** dla Foobar2000.  
+Zawiera gotowe panele, komponenty i konfiguracje, które wykorzystuję do personalizacji wyglądu i działania odtwarzacza.
 
 ---
 
-**W razie potrzeby mogę dodać więcej linków do innych repozytoriów lub stron – napisz, jeśli czegoś brakuje!**
+## 📁 Co znajduje się w repozytorium?
+
+- **Moje ustawienia i wygląd Foobara**  
+  Gotowe konfiguracje, które można łatwo zaimportować lub podejrzeć.
+
+- **Własne panele i skrypty (.js)**  
+  Każdy panel jest w pełni samodzielny i gotowy do użycia w Spider Monkey Panel:
+
+  - `main_player.js` — minimalistyczny player z animacjami, ratingiem, STOP‑mode i progressem w stylu Spotify  
+  - `file_info_panel.js` — dynamiczny panel informacji o pliku (bitrate, samplerate, ReplayGain, codec itd.)  
+  - inne skrypty, które dodaję jako część mojego workflow
+
+- **Komponenty i dodatki**, których używam na co dzień  
+  (np. Spider Monkey Panel 1.6.1)
+
+Repo traktuję jako **archiwum + zestaw narzędzi**, które mogę odtworzyć na dowolnej instalacji Foobara.
+
+---
+
+## 🔗 Linki i inspiracje
+
+- [foobar2000](https://www.foobar2000.org/)  
+- [Spider Monkey Panel **1.6.1**](https://github.com/TheQwertiest/foo_spider_monkey_panel/releases/tag/v1.6.1)  
+- [Oficjalne komponenty Foobara](https://www.foobar2000.org/components)  
+- [GitHub: projekty związane z Foobarem](https://github.com/topics/foobar2000)  
+- Przykładowe panele / inspiracje:  
+  - [foo_jscript_panel](https://github.com/19379/foo_jscript_panel)  
+  - [foo_spider_monkey_panel](https://github.com/19379/foo_spider_monkey_panel)
+
+---
+
+## 🛠 Jak korzystać?
+
+1. Skopiuj wybrane pliki `.js` do panelu Spider Monkey Panel.  
+2. Zainstaluj wymagane komponenty (np. SMP 1.6.1).  
+3. W Foobarze utwórz panel → wklej kod → zapisz layout.  
+4. Gotowe — możesz używać moich paneli lub modyfikować je pod siebie.
+
+---
+
+## 👤 O repozytorium
+
+To repo to **mój osobisty backup** oraz **zestaw ulubionych ustawień i paneli**, które rozwijam na bieżąco.  
+Jeśli chcesz coś podejrzeć, wykorzystać lub zmodyfikować — śmiało.
+
+Jeśli masz pytania lub chcesz coś dorzucić — Issues są otwarte.
+
