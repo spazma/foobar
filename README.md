@@ -27,13 +27,10 @@ Repo traktuję jako **archiwum + zestaw narzędzi**, które mogę odtworzyć na 
 
 ## 🔗 Linki i inspiracje
 
-- [foobar2000](https://www.foobar2000.org/)  
-- [Spider Monkey Panel **1.6.1**](https://github.com/TheQwertiest/foo_spider_monkey_panel/releases/tag/v1.6.1)  
+- 💚 [foobar2000](https://www.foobar2000.org/)  
+- 💚 [Spider Monkey Panel **1.6.1**](https://github.com/TheQwertiest/foo_spider_monkey_panel/releases/tag/v1.6.1)  
 - [Oficjalne komponenty Foobara](https://www.foobar2000.org/components)  
 - [GitHub: projekty związane z Foobarem](https://github.com/topics/foobar2000)  
-- Przykładowe panele / inspiracje:  
-  - [foo_jscript_panel](https://github.com/19379/foo_jscript_panel)  
-  - [foo_spider_monkey_panel](https://github.com/19379/foo_spider_monkey_panel)
 
 ---
 
@@ -51,5 +48,6 @@ Repo traktuję jako **archiwum + zestaw narzędzi**, które mogę odtworzyć na 
 To repo to **mój osobisty backup** oraz **zestaw ulubionych ustawień i paneli**, które rozwijam na bieżąco.  
 Jeśli chcesz coś podejrzeć, wykorzystać lub zmodyfikować — śmiało.
 
-Jeśli masz pytania lub chcesz coś dorzucić — Issues są otwarte.
+Jeśli masz pytania lub chcesz coś dorzucić — Issues są otwarte :(
 
+<img width="1665" height="900" alt="4312foobar2000_gENwxspkAw" src="https://github.com/user-attachments/assets/481f98ce-297b-4844-aa73-c8230cf84ab4" />
