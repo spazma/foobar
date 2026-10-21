@@ -1,5 +1,5 @@
 // COVER PANEL (SMP) — lewy = next art, prawy = prev art
-// Poprawka: brak popupów "No other album art found", dodany cooldown kliknięć
+// Poprawka: prawidłowy reset indeksów, brak popupów, dodany cooldown kliknięć
 
 var ww = 0, wh = 0;
 var coverImg = null;
@@ -47,7 +47,6 @@ function loadCoverIndex(index) {
         return false;
     }
 
-    // cancel pending clear if any
     if (coverClearTimer) {
         window.ClearTimeout(coverClearTimer);
         coverClearTimer = null;
@@ -122,34 +121,20 @@ function findNextAvailableIndex(direction) {
 }
 
 function nextCover() {
-    if (!coverImg) {
-        findAndLoadFirstAvailable();
-        return;
-    }
     var idx = findNextAvailableIndex(1);
     if (idx >= 0) {
         loadCoverIndex(idx);
-    } else {
-        // brak kolejnej okładki — nie pokazujemy popupu, po prostu nic
-        return;
     }
 }
 
 function prevCover() {
-    if (!coverImg) {
-        findAndLoadFirstAvailable();
-        return;
-    }
     var idx = findNextAvailableIndex(-1);
     if (idx >= 0) {
         loadCoverIndex(idx);
-    } else {
-        // brak poprzedniej okładki — nie pokazujemy popupu
-        return;
     }
 }
 
-// original loadCover behaviour: attempt index 0 first, else search any
+// Load cover behaviour: zresetuj indeks do 0 i spróbuj załadować główną okładkę
 function loadCover() {
     coverIndex = 0;
     if (!loadCoverIndex(0)) {
@@ -187,9 +172,7 @@ function on_size() {
 function on_paint(gr) {
     gr.FillSolidRect(0, 0, ww, wh, 0xFF000000);
 
-    // If we have a cover and not stopped -> show fullscreen cover
     if (coverImg && !isStopped) {
-        // subtle music note behind
         var font = gdi.Font("Segoe UI Symbol", Math.max(64, Math.floor(Math.min(ww, wh) / 3)), 0);
         var char = "♪";
         var m = gr.MeasureString(char, font, 0, 0, ww, wh);
@@ -199,7 +182,6 @@ function on_paint(gr) {
         gr.GdiDrawText(char, font, 0x40FFFF00, nx - 1, ny - 1, m.Width, m.Height, 0);
         gr.GdiDrawText(char, font, 0xFFFFFFFF, nx, ny, m.Width, m.Height, 0);
 
-        // scale to fill
         var iw = coverImg.Width;
         var ih = coverImg.Height;
         var scale = Math.max(ww / iw, wh / ih);
@@ -208,25 +190,21 @@ function on_paint(gr) {
         var x = Math.floor((ww - w) / 2);
         var y = Math.floor((wh - h) / 2);
 
-        // draw with alpha coverFade (fallback to non-alpha if DrawImage fails)
         try {
             gr.DrawImage(coverImg, x, y, w, h, 0, 0, iw, ih, 0, coverFade);
         } catch (e) {
             try { gr.DrawImage(coverImg, x, y, w, h, 0, 0, iw, ih); } catch (e2) {}
         }
 
-        // increment fade
         if (coverFade < 255) {
             coverFade = Math.min(255, coverFade + 15);
             window.Repaint();
         }
 
-        // remember draw rect for click detection
         coverRect = { x: x, y: y, w: w, h: h };
         return;
     }
 
-    // no cover -> gradient + big note
     coverRect = null;
 
     var steps = 40;
@@ -252,7 +230,6 @@ function on_paint(gr) {
     gr.GdiDrawText(char2, fontBig, 0xFFFFFFFF, x2, y2, m2.Width, m2.Height, 0);
 }
 
-// helper: allow action only if cooldown expired
 function canDoCoverAction() {
     var now = Date.now();
     if (now - lastCoverAction < COVER_CLICK_COOLDOWN_MS) return false;
@@ -260,7 +237,6 @@ function canDoCoverAction() {
     return true;
 }
 
-// mouse: left click = next cover (if clicked inside cover), right click = prev
 function on_mouse_lbtn_up(x, y) {
     if (!canDoCoverAction()) return;
     if (coverRect && x >= coverRect.x && x <= coverRect.x + coverRect.w &&
@@ -278,7 +254,7 @@ function on_mouse_rbtn_up(x, y) {
 }
 
 // init
-currentTrack = fb.GetNowPlaying();
 coverFade = 0;
 coverIndex = 0;
 lastCoverAction = 0;
+loadCover();
