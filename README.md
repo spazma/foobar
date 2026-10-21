@@ -67,6 +67,6 @@ Ten projekt jest udostępniany na licencji **MIT** — szczegóły znajdziesz w 
 ---
 
 <p align="center">
-  <img width="55%" alt="1iPD1qIpASw" src="https://github.com/user-attachments/assets/55b5a58e-5f9f-4953-98e0-289fcad3990e" />
+  <img width="55%" alt="0vmFuKc5sJl" src="https://github.com/user-attachments/assets/a4f856f4-93b7-4fa7-b720-5da263206aac" />
   <img width="35%" alt="Wmgkov2vJUf" src="https://github.com/user-attachments/assets/e12c885e-b3dc-4c8c-a166-ea9fa988fca7" />
 </p>
