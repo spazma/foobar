@@ -41,35 +41,35 @@ var stopFade = 0; // 0–255
 var stopPulse = 0;
 var stopPulseDir = 1;
 
-// NOWE: recty i stany dla prev/next
+// prev/next
 var prevRect = null;
 var nextRect = null;
 var hoverPrev = false;
 var hoverNext = false;
 
 // HISTORIA
-var history = []; // stos cofnięć (starsze utwory po lewej, ostatni na końcu)
-var future = [];  // stos do przodu (ostatni na końcu)
+var history = [];
+var future = [];
 var currentTrack = null;
 var HISTORY_LIMIT = 200;
 
-// FADE przy zmianie utworu (overlay, nie związany z RG)
+// FADE
 var trackFade = 0;
 var FADE_STEP = 25;
 
-// ARTIST ANIM (slide-in + glow)
+// ARTIST ANIM
 var artistAnim = 0;
 var ARTIST_ANIM_START = 255;
 var ARTIST_ANIM_STEP = 40;
 var ARTIST_SLIDE_MAX = 40;
 var ARTIST_GLOW_MAX = 140;
-var artistRectGlobal = null; // globalne rect dla artist (do tooltipu)
+var artistRectGlobal = null;
 
-// RG FADE-IN (zachowana z poprzedniej wersji — tu rgAlpha kontroluje pojawianie RG)
+// RG
 var rgWaiting = false;
 var rgWaitStart = 0;
-var RG_WAIT_MAX = 1500; // ms
-var rgAlpha = 255;      // start 255 (jeśli w połowie utworu), resetowane w startRgWait()
+var RG_WAIT_MAX = 1500;
+var rgAlpha = 255;
 var RG_FADE_STEP = 25;
 
 // TOOLTIP
@@ -77,9 +77,12 @@ var tooltipTimer = null;
 var tooltipVisible = false;
 var tooltipText = "";
 var tooltipX = 0, tooltipY = 0;
-var tooltipDelay = 600; // ms
+var tooltipDelay = 600;
 var tooltipTarget = null;
 var lastMouseX = 0, lastMouseY = 0;
+
+// GLOBAL title rect for tooltip hit testing
+var titleRect = null;
 
 function startAnim() {
     animTick++;
@@ -101,7 +104,6 @@ function startAnim() {
         if (artistAnim < 0) artistAnim = 0;
     }
 
-    // RG loading / fade-in handling (if rgWaiting, hold rgAlpha at 0 until data or timeout)
     if (rgWaiting) {
         var g = tf("%replaygain_track_gain%");
         var p = tf("%replaygain_track_peak%");
@@ -122,8 +124,12 @@ function startAnim() {
 
 startAnim();
 
-
 // HELPERY
+function trimText(s) {
+    if (!s) return "";
+    return String(s).replace(/^\s+|\s+$/g, "");
+}
+
 function tf(s) {
     var m = fb.GetNowPlaying();
     return m ? fb.TitleFormat(s).EvalWithMetadb(m) : "";
@@ -133,6 +139,20 @@ function tfInt(s) {
     var v = tf(s);
     var n = parseInt(v, 10);
     return isNaN(n) ? 0 : n;
+}
+
+function shortenText(gr, text, font, maxW) {
+    text = trimText(text);
+    if (!text) return "";
+
+    if (gr.CalcTextWidth(text, font) <= maxW) return text;
+
+    var ellipsis = "...";
+    for (var i = text.length; i > 0; i--) {
+        var candidate = text.substring(0, i) + ellipsis;
+        if (gr.CalcTextWidth(candidate, font) <= maxW) return candidate;
+    }
+    return ellipsis;
 }
 
 function formatHandleShort(m) {
@@ -152,9 +172,12 @@ function drawCentered(gr, text, font, color, y) {
     return y + h;
 }
 
+function drawStar(gr, ch, color, x, y, size) {
+    gr.GdiDrawText(ch, fontRating, color, x, y, size, size, 0);
+}
+
 function drawSpotifyProgress(gr, x, y, w, h, pos, len) {
     var bg = hoverProg ? 0xFF505050 : colProgBg;
-    var pulse = 0x20 + Math.floor((Math.sin(animTick / 10) + 1) * 40);
     var base = colProg1 & 0x00FFFFFF;
     var fg = hoverProg ? 0xFF40C0FF : ((0xFF << 24) | base);
 
@@ -178,7 +201,7 @@ function drawSpotifyProgress(gr, x, y, w, h, pos, len) {
     }
 }
 
-// SHORTEN PATH HELPER
+// PATH helper
 function shortenPath(gr, text, font, maxW) {
     if (!text) return "";
     if (gr.CalcTextWidth(text, font) <= maxW) return text;
@@ -239,7 +262,6 @@ function hideTooltip() {
     tooltipTarget = null;
 }
 
-
 // HISTORIA / PLAY
 function sameTrack(a, b) {
     if (!a || !b) return false;
@@ -286,10 +308,10 @@ function playTrack(handle) {
                     if (typeof fb.PlaylistItemPlayback === "function") {
                         fb.PlaylistItemPlayback(pl_idx, new_idx);
                     }
-                } catch(e2) {}
+                } catch (e2) {}
             }
         } catch (e2) {
-            try { fb.RunMainMenuCommand("Playback/Next"); } catch(e3) {}
+            try { fb.RunMainMenuCommand("Playback/Next"); } catch (e3) {}
         }
     }
 }
@@ -297,7 +319,7 @@ function playTrack(handle) {
 function startRgWait() {
     rgWaiting = true;
     rgWaitStart = Date.now();
-    rgAlpha = 0; // reset alpha so RG will fade-in when ready (or when timeout reached)
+    rgAlpha = 0;
 }
 
 function doPrev() {
@@ -344,7 +366,6 @@ function doNext() {
     window.Repaint();
 }
 
-
 // RYSOWANIE
 function on_paint(gr) {
     gr.FillSolidRect(0, 0, ww, wh, colBg);
@@ -373,58 +394,51 @@ function on_paint(gr) {
         if (stopFade > 40) return;
     }
 
-    var artist = tf("%artist%");
-    var title  = tf("%title%");
-    var album  = tf("%album%");
-    var year   = tf("$left(%date%,4)");
+    var artist = trimText(tf("%artist%"));
+    var titleRaw = trimText(tf("%title%"));
+    var album = trimText(tf("%album%"));
+    var year = trimText(tf("$left(%date%,4)"));
     var rating = tfInt("%rating%");
-    var playCount = tf("%play_count%");
-    var bitrate   = tf("%bitrate%");
-    var samplerate = tf("%samplerate%");
-    var filesize  = tf("%filesize_natural%");
-    var channels  = tf("%channels%");
-    var codec     = tf("%codec%");
-    var gain      = tf("%replaygain_track_gain%");
-    var peak      = tf("%replaygain_track_peak%");
-    var path      = tf("%path%");
+    var playCount = trimText(tf("%play_count%"));
+    var bitrate = trimText(tf("%bitrate%"));
+    var samplerate = trimText(tf("%samplerate%"));
+    var filesize = trimText(tf("%filesize_natural%"));
+    var channels = trimText(tf("%channels%"));
+    var codec = trimText(tf("%codec%"));
+    var gain = trimText(tf("%replaygain_track_gain%"));
+    var peak = trimText(tf("%replaygain_track_peak%"));
+    var path = trimText(tf("%path%"));
     var isPlaying = fb.IsPlaying;
-    var isPaused  = fb.IsPaused;
+    var isPaused = fb.IsPaused;
 
     var y = 20;
 
-    // ARTIST (slide-in + black glow) -- left-aligned to title
+    // Tytuł skrócony, wyśrodkowany
+    var titleDisplay = titleRaw ? shortenText(gr, titleRaw, fontTitle, Math.floor(ww * 0.92)) : "";
+    var titleW = titleDisplay ? gr.CalcTextWidth(titleDisplay, fontTitle) : 0;
+    var titleX = titleDisplay ? Math.floor((ww - titleW) / 2) : Math.floor(ww / 2);
+
+    titleRect = null;
+
+    // ARTIST wyżej
     var artistRect = null;
     if (artist) {
-        // zmierz szerokość tytułu aby przypiąć artystę do jego lewej krawędzi
-        var titleW = title ? gr.CalcTextWidth(title, fontTitle) : 0;
-        var titleX = Math.floor((ww - titleW) / 2);
-
-        var text = "> " + artist + " <";
-        var w = gr.CalcTextWidth(text, fontArtist);
+        var artistText = "> " + artist + " <";
+        var artistW = gr.CalcTextWidth(artistText, fontArtist);
         var h = fontArtist.Height;
 
-        // baseX: ustawienie lewej krawędzi artysty na lewą krawędź tytułu
-        // jeśli nie ma tytułu (titleW==0) wróć do centrowania
-        var baseX;
-        if (titleW > 0) {
-            baseX = titleX;
-            // zabezpieczenie: jeśli artysta wychodzi poza prawą krawędź okna, przesuwamy go tak, żeby był widoczny
-            if (baseX + w > ww) baseX = Math.max(0, ww - w);
-        } else {
-            baseX = Math.floor((ww - w) / 2);
-        }
-
+        var artistXc = Math.floor((ww - artistW) / 2);
         var ay = y;
         var offset = Math.floor((artistAnim / ARTIST_ANIM_START) * ARTIST_SLIDE_MAX);
-        var x = baseX - offset;
+        var x = artistXc - offset;
 
         var glowAlpha = Math.floor((artistAnim / ARTIST_ANIM_START) * ARTIST_GLOW_MAX);
         if (glowAlpha > 0) {
             var glowCol = (glowAlpha << 24) | 0x000000;
-            gr.GdiDrawText(text, fontArtist, glowCol, x - 1, ay, w, h, 0);
-            gr.GdiDrawText(text, fontArtist, glowCol, x + 1, ay, w, h, 0);
-            gr.GdiDrawText(text, fontArtist, glowCol, x, ay - 1, w, h, 0);
-            gr.GdiDrawText(text, fontArtist, glowCol, x, ay + 1, w, h, 0);
+            gr.GdiDrawText(artistText, fontArtist, glowCol, x - 1, ay, artistW, h, 0);
+            gr.GdiDrawText(artistText, fontArtist, glowCol, x + 1, ay, artistW, h, 0);
+            gr.GdiDrawText(artistText, fontArtist, glowCol, x, ay - 1, artistW, h, 0);
+            gr.GdiDrawText(artistText, fontArtist, glowCol, x, ay + 1, artistW, h, 0);
         }
 
         var pulse = Math.floor((Math.sin(animTick / 8) + 1) * 20);
@@ -441,48 +455,74 @@ function on_paint(gr) {
         var brightRGB = blendWithWhite(baseColorRGB, pulse);
         var mainCol = (0xFF << 24) | brightRGB;
 
-        gr.GdiDrawText(text, fontArtist, mainCol, x, ay, w, h, 0);
+        gr.GdiDrawText(artistText, fontArtist, mainCol, x, ay, artistW, h, 0);
 
-        artistRect = { x: baseX, y: ay, w: w, h: h, text: artist };
-        artistRectGlobal = artistRect; // expose for tooltip
+        artistRect = { x: x, y: ay, w: artistW, h: h, text: artist };
+        artistRectGlobal = artistRect;
         y += h;
     } else {
         artistRectGlobal = null;
     }
 
-    if (title)  y = drawCentered(gr, title, fontTitle, colText, y + 5);
+    // Tytuł zawsze wyśrodkowany
+    if (titleDisplay) {
+        var titleY = y + 5;
+        gr.GdiDrawText(titleDisplay, fontTitle, colText, titleX, titleY, titleW, fontTitle.Height, 0);
 
-    // RATING stars
+        titleRect = {
+            x: titleX,
+            y: titleY,
+            w: titleW,
+            h: fontTitle.Height,
+            text: titleRaw || titleDisplay
+        };
+
+        y = titleY + fontTitle.Height + 8;
+    }
+
+    // Gwiazdki: bez hover zoom, tylko kolor
     var starY = y + 5;
-    var starSize = fontRating.Height;
-    var totalWidth = starSize * 5;
-    var startX = (ww - totalWidth) / 2;
+    var starBase = fontRating.Height;
+    var totalWidth = starBase * 5;
+    var startX = Math.floor((ww - totalWidth) / 2);
 
     starRects = [];
 
     for (var i = 1; i <= 5; i++) {
-        var sx = startX + (i - 1) * starSize;
+        var sx = startX + (i - 1) * starBase;
         var isFilled = (i <= rating);
         var isHover = (i <= hoverStar);
 
-        var scol = isHover ? 0xFFFFFF00 : (isFilled ? colRating : colSub);
+        var scol = isFilled ? colRating : colSub;
+        if (isHover) {
+            scol = 0xFFFFFF00;
+        }
+
         var char = isFilled ? "★" : "☆";
+        drawStar(gr, char, scol, sx, starY, starBase);
 
-        gr.GdiDrawText(char, fontRating, scol, sx, starY, starSize, starSize, 0);
-
-        starRects.push({ x: sx, y: starY, w: starSize, h: starSize, value: i });
+        starRects.push({ x: sx, y: starY, w: starBase, h: starBase, value: i });
     }
 
-    y = starY + starSize;
+    y = starY + starBase;
 
+    // album/year
     var albumLine = "";
     if (album) albumLine += "Album: " + album;
-    if (year)  albumLine += (album ? "  " : "") + "Year: " + year;
-    if (albumLine) y = drawCentered(gr, albumLine, fontInfo, colSub, y + 5);
+    if (year) albumLine += (album ? "  " : "") + "Year: " + year;
+    if (albumLine) {
+        var albumW = gr.CalcTextWidth(albumLine, fontInfo);
+        var albumX = Math.floor((ww - albumW) / 2);
+
+        gr.GdiDrawText(albumLine, fontInfo, colSub, albumX, y + 5, albumW, fontInfo.Height, 0);
+        y += fontInfo.Height + 8;
+    } else {
+        y += 5;
+    }
 
     y += 15;
 
-    // play count + prev/next (lowercase)
+    // play count + prev/next
     var status = isPlaying ? (isPaused ? "⏸" : "▶") : "■";
     var pcText = (playCount ? playCount : "") + "  " + status;
 
@@ -496,8 +536,8 @@ function on_paint(gr) {
     var nextW = gr.CalcTextWidth(nextText, fontSmall);
 
     var gap = 12;
-    var totalW = pcW + gap + prevW + sepW + nextW;
-    var startXLinks = Math.floor((ww - totalW) / 2);
+    var totalWLinks = pcW + gap + prevW + sepW + nextW;
+    var startXLinks = Math.floor((ww - totalWLinks) / 2);
 
     var pcH = fontSmall.Height;
     gr.GdiDrawText(pcText, fontSmall, colSub, startXLinks, y, pcW, pcH, 0);
@@ -541,17 +581,17 @@ function on_paint(gr) {
     y += 15;
 
     var infoLine = "";
-    if (bitrate)    infoLine += "bitrate: " + bitrate + " | ";
+    if (bitrate) infoLine += "bitrate: " + bitrate + " | ";
     if (samplerate) infoLine += "samplerate: " + samplerate + " | ";
-    if (filesize)   infoLine += filesize + " | ";
-    if (channels)   infoLine += channels + " | ";
-    if (codec)      infoLine += codec;
+    if (filesize) infoLine += filesize + " | ";
+    if (channels) infoLine += channels + " | ";
+    if (codec) infoLine += codec;
 
     if (infoLine) y = drawCentered(gr, infoLine, fontInfo, colInfo, y);
 
     y += 10;
 
-    // RG rendering + set rgRect & tooltip text (use rgAlpha for fade-in)
+    // RG
     rgRect = null;
     var rgTooltip = "";
     var haveGain = (gain && gain.length);
@@ -591,13 +631,12 @@ function on_paint(gr) {
             y += fontInfo.Height;
         }
     } else {
-        // hidden while rgAlpha==0; keep spacing
         y += fontInfo.Height;
     }
 
     y += 20;
 
-    // PATH (shortened display, pathRect.path holds full)
+    // PATH
     if (path) {
         var maxLinkW = Math.floor(ww * 0.9);
         var fullLabel = "Path: " + path;
@@ -620,14 +659,14 @@ function on_paint(gr) {
         pathRect = null;
     }
 
-    // DRAW overlay fade
+    // FADE overlay
     if (trackFade > 0) {
         var alpha = Math.max(0, Math.min(255, Math.floor(trackFade)));
-        var col = (alpha << 24) | 0x000000;
-        gr.FillSolidRect(0, 0, ww, wh, col);
+        var colFade = (alpha << 24) | 0x000000;
+        gr.FillSolidRect(0, 0, ww, wh, colFade);
     }
 
-    // DRAW tooltip (if visible)
+    // tooltip
     if (tooltipVisible && tooltipText) {
         var padding = 6;
         var lines = tooltipText.split("\n");
@@ -650,7 +689,6 @@ function on_paint(gr) {
         }
     }
 }
-
 
 // EVENTS
 function on_size() {
@@ -683,7 +721,6 @@ function on_playback_stop() {
     isStopped = true;
     window.Repaint();
 }
-
 
 // MOUSE
 function on_mouse_lbtn_up(x, y) {
@@ -796,7 +833,7 @@ function on_mouse_move(x, y) {
     }
     if (hpv !== hoverPrev || hnx !== hoverNext) { hoverPrev = hpv; hoverNext = hnx; window.Repaint(); }
 
-    // decide hovered target and schedule/hide tooltip
+    // tooltip target
     var newTarget = null;
     var tText = "";
 
@@ -804,6 +841,11 @@ function on_mouse_move(x, y) {
         y >= pathRect.y && y <= pathRect.y + pathRect.h) {
         newTarget = "path";
         tText = pathRect.path;
+    } else if (titleRect &&
+               x >= titleRect.x && x <= titleRect.x + titleRect.w &&
+               y >= titleRect.y && y <= titleRect.y + titleRect.h) {
+        newTarget = "title";
+        tText = titleRect.text || "";
     } else if (rgRect && x >= rgRect.x && x <= rgRect.x + rgRect.w &&
                y >= rgRect.y && y <= rgRect.y + rgRect.h) {
         newTarget = "rg";
@@ -825,14 +867,13 @@ function on_mouse_move(x, y) {
         tText = "Artist: " + tf("%artist%") + "\nAlbum: " + albumInfo + (yr ? ("\nYear: " + yr) : "");
     } else if (prevRect && x >= prevRect.x && x <= prevRect.x + prevRect.w &&
                y >= prevRect.y && y <= prevRect.y + prevRect.h) {
-        // build up to 5 last history items (most recent first)
         newTarget = "prev";
         if (!history.length) tText = "History is empty";
         else {
             var lines = [];
             for (var i = history.length - 1, c = 0; i >= 0 && c < 5; i--, c++) {
                 try {
-                    lines.push((c+1) + ". " + formatHandleShort(history[i]));
+                    lines.push((c + 1) + ". " + formatHandleShort(history[i]));
                 } catch (e) {}
             }
             tText = lines.join("\n");
@@ -845,7 +886,7 @@ function on_mouse_move(x, y) {
             var lines2 = [];
             for (var j = future.length - 1, c2 = 0; j >= 0 && c2 < 5; j--, c2++) {
                 try {
-                    lines2.push((c2+1) + ". " + formatHandleShort(future[j]));
+                    lines2.push((c2 + 1) + ". " + formatHandleShort(future[j]));
                 } catch (e) {}
             }
             tText = lines2.join("\n");
