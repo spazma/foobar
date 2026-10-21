@@ -11,10 +11,11 @@ Personal **backup of configurations, components, and custom scripts** for Foobar
 ### 📁 Contents
 
 #### 🛠️ Custom Scripts (Spider Monkey Panel)
-* **`main_player.js`** — Minimalist player with animations, rating, session-based prev/next history, and Spotify-style progress bar.
-* **`file_info_panel.js`** — Dynamic file information panel (bitrate, samplerate, ReplayGain, codec, etc.).
-* **`history_panel.js`** — Playback history with auto-generated playlist.
-* **Other** — Additional panels (e.g., artwork panel / `artwork_panel.js`).
+* **`main_player.js`** — Minimalist player with animations [repo🟢](https://github.com/spazma/foobar-SMP-main_player)
+* **`file_info_panel.js`** — Dynamic file information panel [repo🔵](https://github.com/spazma/foobar-SMP-file_info)
+* **`history_panel.js`** — Playback history panel [repo🟡](https://github.com/spazma/foobar2000-history-panel)
+* **`artwork_panel.js`** — Artwork Panel [repo🟠](https://github.com/spazma/-foobar-SMP-artwork_panel)
+* **Other** — Additional panels/config.
 
 #### 🧩 Components & Add-ons
 * 💚 [Spider Monkey Panel 1.6.1](https://github.com/TheQwertiest/foo_spider_monkey_panel/releases/tag/v1.6.1) (**REQUIRED**)
@@ -41,10 +42,11 @@ Mój osobisty **backup konfiguracji, komponentów oraz własnych skryptów** do 
 ### 📁 Zawartość
 
 #### 🛠️ Własne skrypty (Spider Monkey Panel)
-* **`main_player.js`** — minimalistyczny odtwarzacz (animacje, rating, własna historia, pasek postępu Spotify-style).
-* **`file_info_panel.js`** — szczegółowe dane o pliku (bitrate, samplerate, ReplayGain, kodek).
-* **`history_panel.js`** — historia odtwarzania z automatyczną playlistą.
-* **Inne** — dodatkowe panele (np. okładki / `artwork_panel.js`).
+* **`main_player.js`** — minimalistyczny odtwarzacz [repo🟢](https://github.com/spazma/foobar-SMP-main_player)
+* **`file_info_panel.js`** — szczegółowe dane o pliku [repo🔵](https://github.com/spazma/foobar-SMP-file_info)
+* **`history_panel.js`** — historia odtwarzania z automatyczną playlistą [repo🟡](https://github.com/spazma/foobar2000-history-panel)
+* **`artwork_panel.js`** — okładka / artwork [repo🟠](https://github.com/spazma/-foobar-SMP-artwork_panel)
+* **Inne** — dodatkowe panele i konfiguracje.
 
 #### 🧩 Komponenty i dodatki
 * 💚 [Spider Monkey Panel 1.6.1](https://github.com/TheQwertiest/foo_spider_monkey_panel/releases/tag/v1.6.1) (**WYMAGANE**)
