@@ -18,7 +18,7 @@ Personal **backup of configurations, components, and custom scripts** for Foobar
 
 #### 🧩 Components & Add-ons
 * 💚 [Spider Monkey Panel 1.6.1](https://github.com/TheQwertiest/foo_spider_monkey_panel/releases/tag/v1.6.1) (**REQUIRED**)
-* 🖤 [Columns_UI](https://github.com/reupen/columns_ui)
+* 🖤 [Columns_UI](https://github.com/reupen/columns_ui) (**REQUIRED**)
 
 ### 🚀 Quick Start
 
@@ -48,7 +48,7 @@ Mój osobisty **backup konfiguracji, komponentów oraz własnych skryptów** do 
 
 #### 🧩 Komponenty i dodatki
 * 💚 [Spider Monkey Panel 1.6.1](https://github.com/TheQwertiest/foo_spider_monkey_panel/releases/tag/v1.6.1) (**WYMAGANE**)
-* 🖤 [Columns_UI](https://github.com/reupen/columns_ui)
+* 🖤 [Columns_UI](https://github.com/reupen/columns_ui) (**WYMAGANE**)
 
 ### 🚀 Szybki start
 
