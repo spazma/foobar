@@ -23,7 +23,7 @@ Personal **backup of configurations, components, and custom scripts** for Foobar
 
 ### 🚀 Quick Start
 
-1. Download the `.js` files and install the required components (especially SMP 1.6.1).
+1. Download the `.js` files and install the required components (SMP 1.6.1 + Columns_UI).
 2. Create a new panel in Foobar2000, paste the code from the selected `.js` file, and save the layout.
 3. Done! Enjoy using or customizing the scripts.
 
@@ -54,7 +54,7 @@ Mój osobisty **backup konfiguracji, komponentów oraz własnych skryptów** do 
 
 ### 🚀 Szybki start
 
-1. Pobierz skrypty `.js` i zainstaluj wymagane komponenty (głównie SMP 1.6.1).
+1. Pobierz skrypty `.js` i zainstaluj wymagane komponenty (SMP 1.6.1 + Columns_UI).
 2. Dodaj nowy panel w Foobarze, wklej w niego kod odpowiedniego pliku `.js` i zapisz.
 3. Gotowe! Możesz korzystać ze skryptów lub je modyfikować.
 
