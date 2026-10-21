@@ -1,5 +1,5 @@
 // === Playback History Panel + Playlist Writer (SMP 1.6.1) ===
-// Panel: lista 40 utworów z timestampami + session played + total mins
+// Panel: lista 25 utworów z timestampami + session played + total mins
 // Playlista: pełna historia (dodaje nawet duplikaty)
 
 const PLAYLIST_NAME = "> History";
@@ -101,13 +101,15 @@ function on_paint(gr) {
 
         y += lh;
 
-        // zatrzymaj listę przed blokiem info
+        // jeśli lista dojdzie do miejsca info — przerywamy
         if (y > window.Height - (lh * 4)) break;
     }
 
     // --- INFO PRZYKLEJONE DO DOŁU PANELU ---
+
     let infoY = window.Height - (lh * 3) - 5;
 
+    // separator
     gr.GdiDrawText(
         "---------------",
         gdi.Font("Segoe UI", 12, 0),
@@ -117,6 +119,7 @@ function on_paint(gr) {
 
     infoY += lh;
 
+    // session played
     gr.GdiDrawText(
         "session played: " + sessionPlayed,
         gdi.Font("Segoe UI", 12, 0),
@@ -126,6 +129,7 @@ function on_paint(gr) {
 
     infoY += lh;
 
+    // total minutes
     gr.GdiDrawText(
         "total mins: " + Math.floor(totalMinutes),
         gdi.Font("Segoe UI", 12, 0),
